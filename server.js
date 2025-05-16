@@ -51,14 +51,12 @@ app.get("/api/sites", (req, res) => {
     req.query.region ? req.query.region : "",
     req.query.provinceOrTerritoryName ? req.query.provinceOrTerritoryName : ""
   ).then((data) => {
-    console.log(data);
     res.send(data);
   });
 });
 
 app.get("/api/sites/:id", (req, res) => {
   db.getSiteById(req.params.id).then((data) => {
-    console.log(data);
     res.send(data);
   });
 });
