@@ -8,7 +8,7 @@
  *
  * Name: Yevhen Chernytskyi Student ID: 166613232 Date: May 16 2025
  *
- * Published URL on Vercel:
+ * Published URL on Vercel: https://sites-api-nine.vercel.app/
  *
  ********************************************************************************/
 
