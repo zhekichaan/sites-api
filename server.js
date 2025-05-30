@@ -17,6 +17,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const SitesDB = require("./modules/sitesDB.js");
 
+const path = require("path");
+
 const app = express();
 const HTTP_PORT = 3000;
 
@@ -29,18 +31,18 @@ mongoose.connect(process.env.MONGODB_CONN_STRING);
 
 const db = new SitesDB();
 
-app.get("/", (req, res) =>
-  res.json({
-    message: "API Listening",
-    term: "Summer 2025",
-    student: "Yevhen Chernytskyi",
-  })
-);
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 app.post("/api/sites", (req, res) => {
   db.addNewSite(req.body)
     .then((data) => res.status(201).send(data))
-    .catch(res.status(400).send("Unable to add a new site."));
+    .catch((err) => {
+      res.status(400).send("Unable to add a new site: ", err);
+    });
 });
 
 app.get("/api/sites", (req, res) => {
@@ -62,7 +64,7 @@ app.get("/api/sites/:id", (req, res) => {
 });
 
 app.put("/api/sites/:id", (req, res) => {
-  db.updateSiteById(req.params.id)
+  db.updateSiteById(req.body, req.params.id)
     .then((data) => {
       res.send("Updated successfuly.");
     })
