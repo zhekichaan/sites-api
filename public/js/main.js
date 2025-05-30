@@ -21,7 +21,7 @@ const loadSitesData = () => {
 
   fetch(url)
     .then((res) => {
-      return res.ok ? res.json() : Promise.reject(res.status);
+      return res.json();
     })
     .then((data) => {
       if (data.length) {
