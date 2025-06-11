@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const siteSchema = require("./siteSchema");
+
 module.exports = class SitesDB {
   constructor() {
-    this.Site = null;
+    this.Site = db.model("site", siteSchema);
   }
   initialize(connectionString) {
     return new Promise((resolve, reject) => {
