@@ -14,8 +14,6 @@
 
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
-const SitesDB = require("./modules/sitesDB.js");
 
 const app = express();
 const HTTP_PORT = 3000;
@@ -25,61 +23,54 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_CONN_STRING);
-
+const SitesDB = require("./modules/sitesDB.js");
 const db = new SitesDB();
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "API Listening",
+    term: "Summer 2025",
+    student: "Yevhen Chernytskyi",
+  });
+});
+
+app.post("/api/sites", (req, res) => {
+  db.addNewSite(req.body)
+    .then((site) => res.status(201).json(site))
+    .catch((err) => res.status(500).json({ message: err.message }));
+});
+
+app.get("/api/sites", (req, res) => {
+  const { page, perPage, name, region, provinceOrTerritoryName } = req.query;
+
+  db.getAllSites(page, perPage, name, region, provinceOrTerritoryName)
+    .then((sites) => res.json(sites))
+    .catch((err) => res.status(500).json({ message: err.message }));
+});
+
+app.get("/api/sites/:id", (req, res) => {
+  db.getSiteById(req.params.id)
+    .then((site) => {
+      if (site) res.json(site);
+      else res.status(404).json({ message: "Site not found" });
+    })
+    .catch((err) => res.status(500).json({ message: err.message }));
+});
+
+app.put("/api/sites/:id", (req, res) => {
+  db.updateSiteById(req.body, req.params.id)
+    .then(() => res.status(204).end())
+    .catch((err) => res.status(500).json({ message: err.message }));
+});
+
+app.delete("/api/sites/:id", (req, res) => {
+  db.deleteSiteById(req.params.id)
+    .then(() => res.status(204).end())
+    .catch((err) => res.status(500).json({ message: err.message }));
+});
 
 db.initialize(process.env.MONGODB_CONN_STRING)
   .then(() => {
-    app.post("/api/sites", (req, res) => {
-      db.addNewSite(req.body)
-        .then((data) => res.status(201).send(data))
-        .catch((err) => {
-          res.status(400).send("Unable to add a new site: ", err);
-        });
-    });
-
-    app.get("/api/sites", async (req, res) => {
-      try {
-        const data = await db.getAllSites(
-          req.query.page,
-          req.query.perPage,
-          req.query.name || "",
-          req.query.region || "",
-          req.query.provinceOrTerritoryName || ""
-        );
-        res.send(data);
-      } catch (err) {
-        res.status(400).send("Error fetching sites");
-      }
-    });
-
-    app.get("/api/sites/:id", (req, res) => {
-      db.getSiteById(req.params.id)
-        .then((data) => {
-          res.send(data);
-        })
-        .catch((err) => {
-          res.status(404).send(err);
-        });
-    });
-
-    app.put("/api/sites/:id", (req, res) => {
-      db.updateSiteById(req.body, req.params.id)
-        .then((data) => {
-          res.send("Updated successfuly.");
-        })
-        .catch((err) => {
-          res.status(400).send(err);
-        });
-    });
-
-    app.delete("/api/sites/:id", (req, res) => {
-      db.deleteSiteById(req.params.id)
-        .then()
-        .catch((err) => res.status(400).send(err));
-    });
-
     app.listen(HTTP_PORT, () => {
       console.log(`server listening on: ${HTTP_PORT}`);
     });
