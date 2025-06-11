@@ -12,19 +12,18 @@
  *
  ********************************************************************************/
 
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 
-const app = express();
-const HTTP_PORT = 3000;
-
-require("dotenv").config();
-
-app.use(cors());
-app.use(express.json());
-
 const SitesDB = require("./modules/sitesDB.js");
 const db = new SitesDB();
+
+const app = express();
+const HTTP_PORT = 3000;
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({
