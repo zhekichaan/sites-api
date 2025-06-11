@@ -1,16 +1,19 @@
 const mongoose = require("mongoose");
 const siteSchema = require("./siteSchema");
-
 module.exports = class SitesDB {
   constructor() {
     this.Site = null;
   }
-
   initialize(connectionString) {
     return new Promise((resolve, reject) => {
-      mongoose.connect(connectionString);
-
-      this.Site = mongoose.model("site", siteSchema);
+      const db = mongoose.createConnection(connectionString);
+      db.once("error", (err) => {
+        reject(err);
+      });
+      db.once("open", () => {
+        this.Site = db.model("site", siteSchema);
+        resolve();
+      });
     });
   }
 
@@ -36,7 +39,6 @@ module.exports = class SitesDB {
     } else if (name) {
       findBy = { siteName: { $regex: name, $options: "i" } };
     }
-
     if (+page && +perPage) {
       return this.Site.find(findBy)
         .sort({ siteName: 1 })
@@ -44,20 +46,16 @@ module.exports = class SitesDB {
         .limit(+perPage)
         .exec();
     }
-
     return Promise.reject(
       new Error("page and perPage query parameters must be valid numbers")
     );
   }
-
   getSiteById(id) {
     return this.Site.findById(id).exec();
   }
-
   updateSiteById(data, id) {
     return this.Site.updateOne({ _id: id }, { $set: data }).exec();
   }
-
   deleteSiteById(id) {
     return this.Site.deleteOne({ _id: id }).exec();
   }
