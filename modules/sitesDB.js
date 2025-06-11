@@ -18,11 +18,13 @@ module.exports = class SitesDB {
       });
     });
   }
+
   async addNewSite(data) {
     const newSite = new this.Site(data);
     await newSite.save();
     return newSite;
   }
+
   getAllSites(page, perPage, name, region, provinceOrTerritoryName) {
     let findBy = {};
     if (region) {

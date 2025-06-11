@@ -17,8 +17,6 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const SitesDB = require("./modules/sitesDB.js");
 
-const path = require("path");
-
 const app = express();
 const HTTP_PORT = 3000;
 
@@ -30,12 +28,6 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_CONN_STRING);
 
 const db = new SitesDB();
-
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
 
 app.post("/api/sites", (req, res) => {
   db.addNewSite(req.body)
