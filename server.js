@@ -44,15 +44,23 @@ app.get("/api/sites", (req, res) => {
     req.query.name ? req.query.name : "",
     req.query.region ? req.query.region : "",
     req.query.provinceOrTerritoryName ? req.query.provinceOrTerritoryName : ""
-  ).then((data) => {
-    res.send(data);
-  });
+  )
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
 });
 
 app.get("/api/sites/:id", (req, res) => {
-  db.getSiteById(req.params.id).then((data) => {
-    res.send(data);
-  });
+  db.getSiteById(req.params.id)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
 });
 
 app.put("/api/sites/:id", (req, res) => {
