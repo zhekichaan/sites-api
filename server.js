@@ -68,6 +68,15 @@ app.delete("/api/sites/:id", (req, res) => {
     .catch((err) => res.status(500).json({ message: err.message }));
 });
 
+console.log(
+  "Loaded MONGODB_CONN_STRING:",
+  process.env.MONGODB_CONN_STRING?.length
+);
+
+if (!process.env.MONGODB_CONN_STRING) {
+  throw new Error("Missing MONGODB_CONN_STRING");
+}
+
 db.initialize(process.env.MONGODB_CONN_STRING)
   .then(() => {
     app.listen(HTTP_PORT, () => {
