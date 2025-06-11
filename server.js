@@ -68,17 +68,11 @@ app.delete("/api/sites/:id", (req, res) => {
     .catch((err) => res.status(500).json({ message: err.message }));
 });
 
-console.log(
-  "Loaded MONGODB_CONN_STRING:",
-  process.env.MONGODB_CONN_STRING?.length
-);
-
-if (!process.env.MONGODB_CONN_STRING) {
-  throw new Error("Missing MONGODB_CONN_STRING");
-}
+console.log("Trying to init DB with:", process.env.MONGODB_CONN_STRING);
 
 db.initialize(process.env.MONGODB_CONN_STRING)
   .then(() => {
+    console.log("DB Initialized"); // <-- Do you see this in logs?
     app.listen(HTTP_PORT, () => {
       console.log(`server listening on: ${HTTP_PORT}`);
     });
