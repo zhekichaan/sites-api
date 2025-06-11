@@ -8,12 +8,9 @@ module.exports = class SitesDB {
 
   initialize(connectionString) {
     return new Promise((resolve, reject) => {
-      const db = mongoose.connect(connectionString);
-      db.once("error", (err) => reject(err));
-      db.once("open", () => {
-        this.Site = db.model("site", siteSchema);
-        resolve();
-      });
+      mongoose.connect(connectionString);
+
+      this.Site = mongoose.model("site", siteSchema);
     });
   }
 
